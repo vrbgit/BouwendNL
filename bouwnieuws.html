@@ -1,8 +1,75 @@
 <!DOCTYPE html>
 <html>
 <body>
+<button>scroll naar nieuws</button>
+<div class='iFrame'><iframe src="https://www.bouwendnederland.nl/nieuws" style="border:0px #ffffff none;" name="myiFrame" scrolling="yes" frameborder="1" marginheight="0px" marginwidth="0px" height="1200px" width="350px" allowfullscreen></iframe>
+  <div class='boxChild'></div>
+</div>
+<style>
 
-<iframe src="https://www.bouwendnederland.nl/nieuws" width="350" height="1200" style="position: absolute; top: -150px; left: 0; border:0px solid black;"></iframe>
+.iFrame{ width:370px; border:2px solid; height:600px; overflow:auto; }
+.boxChild{ 
+  margin:0px 0px 0px; 
+  width: 5px;
+  height:50px;
+  background:;
+
+
+</style>
+
+<script>
+var box = document.querySelector('.iFrame'),
+    targetElm = document.querySelector('.boxChild'); // <-- Scroll to here within ".box"
+
+document.querySelector('button').addEventListener('click', function(){
+   scrollToElm( box, targetElm , 600 );   
+});
+
+
+/////////////
+
+function scrollToElm(container, elm, duration){
+  var pos = getRelativePos(elm);
+  scrollTo(container, pos.top , duration/1000);  // duration in seconds
+}
+
+function getRelativePos(elm){
+  var pPos = elm.parentNode.getBoundingClientRect(), // parent pos
+      cPos = elm.getBoundingClientRect(), // target pos
+      pos = {};
+
+  pos.top    = cPos.top    - pPos.top + elm.parentNode.scrollTop,
+  pos.right  = cPos.right  - pPos.right,
+  pos.bottom = cPos.bottom - pPos.bottom,
+  pos.left   = cPos.left   - pPos.left;
+
+  return pos;
+}
+    
+function scrollTo(element, to, duration, onDone) {
+    var start = element.scrollTop,
+        change = to - start,
+        startTime = performance.now(),
+        val, now, elapsed, t;
+
+    function animateScroll(){
+        now = performance.now();
+        elapsed = (now - startTime)/1000;
+        t = (elapsed/duration);
+
+        element.scrollTop = start + change * easeInOutQuad(t);
+
+        if( t < 1 )
+            window.requestAnimationFrame(animateScroll);
+        else
+            onDone && onDone();
+    };
+
+    animateScroll();
+}
+
+function easeInOutQuad(t){ return t<.5 ? 2*t*t : -1+(4-2*t)*t };
+</script>
 
 </body>
 </html>
